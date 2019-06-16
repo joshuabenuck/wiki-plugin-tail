@@ -1,0 +1,31 @@
+{
+  "name": "wiki-plugin-tail",
+  "version": "0.0.1",
+  "description": "Federated Wiki - Tail Plugin",
+  "keywords": [
+    "tail",
+    "wiki",
+    "federated wiki",
+    "plugin"
+  ],
+  "author": {
+    "name": "Joshua Benuck",
+    "url": "https://github.com/joshuabenuck"
+  },
+  "contributors": [],
+  "devDependencies": {
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshuabenuck/wiki-plugin-tail.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joshuabenuck/wiki-plugin-tail/issues"
+  },
+  "engines": {
+    "node": ">=0.10"
+  },
+  "dependencies": {
+  }
+}
