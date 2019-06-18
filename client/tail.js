@@ -53,10 +53,19 @@ const consumes = {
 // once they have been initialized.
 const emit($item, item) => {
   $item.empty()
+  $item.append(`
+    <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
+    No sources found.
+    </div>`);
+};
+
+const bind($item, item) => {
+  // TODO: Allow editing of content / create DSL to configure # of entries to keep.
   let candidates = $(`.item:lt(${$('.item').index($item)})`)
   let who = candidates.filter('.server-source').reverse()
   let sources = []
   if (who.size()) {
+    $item.empty()
     let service = who.service()
     let slugItem = `${service.slug}/${service.item}`
     $item.append(`
@@ -66,14 +75,6 @@ const emit($item, item) => {
     return
   }
 
-  $item.append(`
-    <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
-    No sources found.
-    </div>`);
-};
-
-const bind($item, item) => {
-  // TODO: Allow editing of content / create DSL to configure # of entries to keep.
   /*
   $item.dblclick(() => {
     return wiki.textEditor($item, item);
