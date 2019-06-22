@@ -13,8 +13,7 @@
     "url": "https://github.com/joshuabenuck"
   },
   "contributors": [],
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,6 +25,5 @@
   "engines": {
     "node": ">=0.10"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
