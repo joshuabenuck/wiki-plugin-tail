@@ -41,26 +41,21 @@ const parse = (text) => {
 */
 
 const consumes = {
-  '.server-source': ($item, item, data) => {
-    $item.clear()
-    $item.append(`
-      <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
-      ${new Date()} - ${data}
-      </div>`);
+  '.server-source': ($item, result) => {
+      $item.find(".content").empty().append("div").text(new Date() + JSON.stringify(result))
   }
 }
 
-const listener = (...args) => {
-  console.log(args)
+const listener = (e) => {
   // Find all items for the tail plugin in the lineup
   // For each, find items of the consuming type earlier in the page
   // If slugItem is one of those, forward the event on to the item specific handler
   // The item specific handler then chooses whether to act on it
-  console.log("In listener for", e.slugItem, "with result", e.result)
+  //console.log("In listener for", e.slugItem, "with result", e.result)
   $('.tail').each((i, item) => {
-    console.log(item, item.consuming)
-    if(item.consuming.find(e.slugItem) != -1) {
-      $item.find(".tail").empty().append("div").text(new Date() + e.result)
+    //console.log(item, item.consuming, e.slugItem)
+    if(item.consuming.indexOf(e.slugItem) != -1) {
+      consumes[e.type]($(item), e.result)
     }
   })
 }
@@ -89,20 +84,20 @@ const emit = ($item, item) => {
 
 const bind = ($item, item) => {
   // TODO: Allow editing of content / create DSL to configure # of entries to keep.
-  let candidates = $(`.item:lt(${$('.item').index($item)})`)
+  let candidates = $(`.item:lt(${$('.item').index($item)})`).filter(".server-source")
   // TODO: Only find those before...
-  let who = candidates.filter('.server-source')
   let sources = []
-  if (who.size()) {
+  if (candidates.size()) {
     $item.empty()
     // TODO: Check on ordering...
-    let service = who[0].service()
+    let service = candidates[candidates.length-1].service()
     console.log('service', service)
     let slugItem = `${service.slug}/${service.id}`
+    $item[0].consuming.push(slugItem)
     $item.append(`
       <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
       Tailing ${slugItem}
-      <div class="tail"></div>
+      <div class="content"></div>
       </div>`);
     return
   }
