@@ -54,9 +54,8 @@ const listener = (e) => {
   //console.log("In listener for", e.slugItem, "with result", e.result)
   $('.tail').each((i, item) => {
     //console.log(item, item.consuming, e.slugItem)
-    if(item.consuming.indexOf(e.slugItem) != -1) {
-      consumes[e.type]($(item), e.result)
-    }
+    if(!item.consuming || item.consuming.indexOf(e.slugItem) == -1) return
+    consumes[e.type]($(item), e.result)
   })
 }
 
