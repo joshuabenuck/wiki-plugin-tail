@@ -49,12 +49,11 @@ const consumes = {
 const listener = (e) => {
   // Find all items for the tail plugin in the lineup
   // For each, find items of the consuming type earlier in the page
-  // If slugItem is one of those, forward the event on to the item specific handler
+  // If pageItem is one of those, forward the event on to the item specific handler
   // The item specific handler then chooses whether to act on it
-  //console.log("In listener for", e.slugItem, "with result", e.result)
+  //console.log("In listener for", e.pageItem, "with result", e.result)
   $('.tail').each((i, item) => {
-    //console.log(item, item.consuming, e.slugItem)
-    if(!item.consuming || item.consuming.indexOf(e.slugItem) == -1) return
+    if(!item.consuming || item.consuming.indexOf(e.pageItem) == -1) return
     consumes[e.type]($(item), e.result)
   })
 }
@@ -91,11 +90,11 @@ const bind = ($item, item) => {
     // TODO: Check on ordering...
     let service = candidates[candidates.length-1].service()
     console.log('service', service)
-    let slugItem = `${service.slug}/${service.id}`
-    $item[0].consuming.push(slugItem)
+    let pageItem = `${service.page}/${service.id}`
+    $item[0].consuming.push(pageItem)
     $item.append(`
       <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
-      Tailing ${slugItem}
+      Tailing ${pageItem}
       <div class="content"></div>
       </div>`);
     return
