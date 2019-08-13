@@ -80,16 +80,38 @@ const emit = ($item, item) => {
     </div>`);
 };
 
+let observer = null;
+
 const bind = ($item, item) => {
+  if (observer == null) {
+    observer = new MutationObserver((records) => {
+      console.log(records)
+      let sources = records
+        .filter(r => r.type == "childList")
+        .filter(r => r.target.classList.contains("story"))
+        .flatMap(r => [...r.addedNodes].concat([...r.removedNodes]))
+        .filter(n => n.classList.contains("server-source"))
+        .concat(records.filter(r => r.target.classList.contains("server-source")))
+      if (sources.length > 0) {
+        console.log("rebinding", $item)
+        // does this capture old contents of the item?
+        bind($item, item)
+      }
+    });
+    observer.observe(document, {subtree: true, childList: true, attributeFilter: ["classList"], attributes: true});
+  }
+  console.log('tail bind', $item, item)
   // TODO: Allow editing of content / create DSL to configure # of entries to keep.
   let candidates = $(`.item:lt(${$('.item').index($item)})`).filter(".server-source")
   // TODO: Only find those before...
   let sources = []
   if (candidates.size()) {
-    $item.empty()
     // TODO: Check on ordering...
-    let service = candidates[candidates.length-1].service()
-    console.log('service', service)
+    let candidate = candidates[candidates.length-1]
+    if (!candidate.service) return
+    $item.empty()
+    let service = candidate.service()
+    console.log('service', service, $item[0], $item[0].consuming)
     let pageItem = `${service.page}/${service.id}`
     $item[0].consuming.push(pageItem)
     $item.append(`
@@ -100,6 +122,41 @@ const bind = ($item, item) => {
     return
   }
 
+      /*
+      let rebind = false;
+      for (let e of records) {
+        if (e.type == "childList") {
+          // detect added or removed items
+          if (e.target.classList.contains("story")) {
+            for (let added of e.addedNodes) {
+              if (added.classList.contains("server-source")) {
+                rebind = true
+                break
+              }
+            }
+            for (let removed of e.removedNodes) {
+              if (removed.classList.contains("server-source")) {
+                rebind = true
+                break
+              }
+            }
+          }
+          // detect inner mutations
+          if (e.target.classList.contains("server-source")) {
+            rebind = true
+          }
+        }
+        //else {
+        //  console.log("wrong type", e.type, e)
+        //}
+        console.log("mutation:", records);
+      }
+      if (rebind) {
+        console.log("rebinding", $item)
+        // does this capture old contents of the item?
+        bind($item, item)
+      }
+      */
   /*
   $item.dblclick(() => {
     return wiki.textEditor($item, item);
