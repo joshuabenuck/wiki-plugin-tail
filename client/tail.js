@@ -1,4 +1,17 @@
 (function() {
+
+function ago (msec) {
+  let secs,mins,hrs,days,weeks,months,years
+  secs = msec/1000
+  if ((mins = secs/60) < 2) return `${Math.round(secs)} seconds`
+  if ((hrs = mins/60) < 2) return `${Math.round(mins)} minutes`
+  if ((days = hrs/24) < 2) return `${Math.round(hrs)} hours`
+  if ((weeks = days/7) < 2) return `${Math.round(days)} days`
+  if ((months = days/31) < 2) return `${Math.round(weeks)} weeks`
+  if ((years = days/365) < 2) return `${Math.round(months)} months`
+  return `${Math.round(years)} years`
+}
+
 /*
 const expand = (text) => {
   return text
@@ -40,9 +53,27 @@ const parse = (text) => {
 }
 */
 
+const lap = ($item) => {
+  let ticks = $item[0].ticks
+  ticks.start = ticks.end
+  ticks.end = ticks.now = Date.now()
+}
+
+const caption = ($item) => {
+  let ticks = $item[0].ticks
+  let now = ticks.now = Date.now()
+  let lap = ticks.start ? `${ago(ticks.end-ticks.start)} lap, ` : ''
+  let run = ticks.end ? `${ago(ticks.now-ticks.end)} waiting` : ''
+  return `${lap} ${run}`
+}
+
 const consumes = {
   '.server-source': ($item, result) => {
-      $item.find(".content").empty().append("div").text(new Date() + JSON.stringify(result))
+    lap($item)
+    $item.find('.content').html(`
+      <p class=caption>${caption($item)}</p>
+      <pre>${JSON.stringify(result,null,2)}</pre>
+    `)
   }
 }
 
@@ -71,6 +102,7 @@ Object.keys(consumes).forEach(c => {
 const emit = ($item, item) => {
   // TODO: Rework in order to support multiple types.
   $item[0].consuming = []
+  $item[0].ticks = {}
   console.log('emitting', item)
   console.log('emitting tail')
   $item.empty()
@@ -92,11 +124,16 @@ const bind = ($item, item) => {
     console.log('service', service)
     let pageItem = `${service.page}/${service.id}`
     $item[0].consuming.push(pageItem)
+    $item[0].ticks.end = Date.now()
     $item.append(`
       <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
       Tailing ${pageItem}
-      <div class="content"></div>
+      <div class="content"><p class=caption></p></div>
       </div>`);
+    const tick = () => {$item.find('.content p').text(caption($item))}
+    tick()
+    clearInterval($item[0].interval)
+    $item[0].interval = setInterval(tick, 1000)
     return
   }
 
