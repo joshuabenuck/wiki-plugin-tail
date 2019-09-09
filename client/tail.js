@@ -106,8 +106,9 @@ const emit = ($item, item) => {
   console.log('emitting', item)
   console.log('emitting tail')
   $item.empty()
+  $item.addClass('output-item')
   $item.append(`
-    <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
+    <div>
     No sources found.
     </div>`);
 };
@@ -126,10 +127,9 @@ const bind = ($item, item) => {
     $item[0].consuming.push(pageItem)
     $item[0].ticks.end = Date.now()
     $item.append(`
-      <div style="background-color:#eee; padding:15px; margin-block-start:1em; margin-block-end:1em;">
       Tailing ${pageItem}
       <div class="content"><p class=caption></p></div>
-      </div>`);
+      `);
     const tick = () => {$item.find('.content p').text(caption($item))}
     tick()
     clearInterval($item[0].interval)
