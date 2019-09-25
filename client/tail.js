@@ -162,6 +162,6 @@ console.log('hello from tail!')
 console.log(typeof window)
 console.log(window)
 if (typeof window !== "undefined" && window !== null) {
-  window.plugins.tail = {Object.keys(consumes), emit, bind};
+  window.plugins.tail = {consumes: Object.keys(consumes), emit, bind};
 }
 }).call(this);
