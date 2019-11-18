@@ -101,19 +101,20 @@ Object.keys(consumes).forEach(c => {
 // once they have been initialized.
 const emit = ($item, item) => {
   // TODO: Rework in order to support multiple types.
-  $item[0].consuming = []
   $item[0].ticks = {}
-  console.log('emitting', item)
-  console.log('emitting tail')
-  $item.empty()
   $item.addClass('output-item')
   $item.append(`
     <div>
     No sources found.
     </div>`);
+
+  $item.dblclick(() => {
+    return wiki.textEditor($item, item);
+  });
 };
 
 const bind = ($item, item) => {
+  $item[0].consuming = []
   // TODO: Allow editing of content / create DSL to configure # of entries to keep.
   let candidates = $(`.item:lt(${$('.item').index($item)})`).filter(".server-source")
   // TODO: Only find those before...
@@ -138,10 +139,6 @@ const bind = ($item, item) => {
   }
 
   /*
-  $item.dblclick(() => {
-    return wiki.textEditor($item, item);
-  });
-
   let $button = $item.find('button')
   let parsed = parse(item.text)
 
@@ -158,9 +155,6 @@ const bind = ($item, item) => {
   */
 }
 
-console.log('hello from tail!')
-console.log(typeof window)
-console.log(window)
 if (typeof window !== "undefined" && window !== null) {
   window.plugins.tail = {consumes: Object.keys(consumes), emit, bind};
 }
